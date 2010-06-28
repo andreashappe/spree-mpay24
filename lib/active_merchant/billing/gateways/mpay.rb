@@ -26,11 +26,14 @@ module ActiveMerchant
           xml.tag! 'price', amount(money)
           xml.tag! 'BillingAddr', :mode => 'ReadWrite' do
             xml.tag! 'Name', options[:shipping_address][:name]
+            xml.tag! 'City', options[:shipping_address][:city]
+            xml.tag! 'Street', options[:shipping_address][:street]
             #TODO: add more address stuff from options hash
           end
 
           xml.tag! 'URL' do
             xml.tag! 'Confirmation', 'some-confirmation-url'
+            xml.tag! 'Notifcation', mpay_callbacks_url
           end
         end
 

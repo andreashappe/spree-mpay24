@@ -8,4 +8,4 @@ map.resources :orders do |order|
                                        }
 end
 
-map.resources :mpay_express_callbacks, :only => [:index]
+map.resources :mpay_callbacks, :only => [:index]
