@@ -2,26 +2,15 @@
 # require_dependency 'application'
 
 class MpayGatewayExtension < Spree::Extension
-  version "1.0"
-  description "Describe your extension here"
-  url "http://yourwebsite.com/mpay_gateway"
+  version "0.1"
+  description "MPay24.at payment gateway intergration"
+  url "http://starseeders.net"
 
-  # Please use mpay_gateway/config/routes.rb instead for extension routes.
-
-  # def self.require_gems(config)
-  #   config.gem "gemname-goes-here", :version => '1.2.3'
-  # end
-  
   def activate
-
+    # load billing stuff
     BillingIntegration::MPay.register
-
-    # make your helper avaliable in all views
-    # Spree::BaseController.class_eval do
-    #   helper YourHelper
-    # end
    
-    # add custom checkout code
+    # integrate custom checkout/payment logic
     CheckoutsController.class_eval do
       include Spree::MPay
     end
