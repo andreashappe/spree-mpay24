@@ -1,0 +1,67 @@
+module Spree::MPay
+  def self.included(target)
+    target.before_filter :redirect_to_mpay, :only => [:update]
+  end
+
+  def mpay_payment
+    load_object
+
+    opts = all_opts(@order, params[:payment_method_id], 'payment')
+    opts.merge!(address_options(@order))
+    gateway = mpay_gateway
+
+    response = gateway.setup_authorization(opts[:money], opts)
+    unless response.success?
+      gateway_error(response)
+      redirect_to edit_order_checkout_url(@order, :stop => "payment")
+      return
+    end
+  end
+
+  private
+
+  def redirect_to_mpay
+    return unless params[:step] == 'payment'
+
+    load_object
+
+    payment_method = PaymentMethod.find(params[:checkout][:payments_attribute].first[:payment_method_id])
+
+    if payment_method.kind_of?(BillingIntegration::MPay)
+      redirect_to mpay_payment_order_checkout_url(@checkout.order, :payment_method => payment_method)
+    end
+  end
+
+  def mpay_gateway
+    payment_method.provider
+  end
+
+  def gateway_error(response)
+    raise response.inspect
+
+    msg = "some error message"
+    logger.error(msg)
+    flash[:error] = msg
+  end
+
+  def address_options(order)
+    if payment_method.preferred_no_shipping
+      { :no_shipping => true }
+    else
+      # TODO: why?
+      { :no_shipping => false,
+        :address_override => true,
+        :address => {
+          :name => "#{order.ship_address.firstname} #{order.ship_address.lastname}",
+          :address1 => order.ship_address.address1,
+          :address2 => order.ship_address.address2,
+          :city => oder.ship_address.city,
+          :state => order.ship_address.state.nil? order.ship_address.state_name.to_s : order.ship_address.state.abbr,
+          :country => order.ship_address.country.iso,
+          :zip => order.ship_adress.zipcode,
+          :phone => order.ship_address.phone
+        }
+      }
+    end
+  end
+end
