@@ -1,0 +1,8 @@
+<h1>This is some confirmation page</h1>
+<p>
+  Order not yet placed..
+</p>
+
+<%= render :partial => 'shared/order_details', :locals => { :order => @order } - %>
+
+<iframe src="<%= iframe_url %>"/>

@@ -3,9 +3,11 @@ module Spree::MPay
     target.before_filter :redirect_to_mpay, :only => [:update]
   end
 
+  # this will be called for each payment request
   def mpay_payment
     load_object
 
+    # TODO: add all those options
     opts = all_opts(@order, params[:payment_method_id], 'payment')
     opts.merge!(address_options(@order))
     gateway = mpay_gateway
@@ -16,6 +18,13 @@ module Spree::MPay
       redirect_to edit_order_checkout_url(@order, :stop => "payment")
       return
     end
+  end
+
+  # this should be called after a payment was completed within
+  # mpay. Only display some notification message, the real 'confirmation'
+  # should happen into the external mpay notification controller
+  def mpay_success
+    raise params.inspect
   end
 
   private
