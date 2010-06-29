@@ -7,8 +7,6 @@ class MpayGatewayExtension < Spree::Extension
   url "http://starseeders.net"
 
   def activate
-    #require File.join(MPayExtension.root, "app", "model", "billing_integration", "mpay.rb")
-
     # load billing stuff
     BillingIntegration::Mpay.register
    

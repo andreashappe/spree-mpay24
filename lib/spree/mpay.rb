@@ -30,11 +30,15 @@ module Spree::Mpay
   private
 
   def redirect_to_mpay
+
+    # das ist ein step zu spaet?
     return unless params[:step] == 'payment'
 
     load_object
 
-    payment_method = PaymentMethod.find(params[:checkout][:payments_attribute].first[:payment_method_id])
+    payment_method = PaymentMethod.find(params[:checkout][:payments_attributes].first[:payment_method_id])
+
+    raise payment_method.inspect
 
     if payment_method.kind_of?(BillingIntegration::Mpay)
       redirect_to mpay_payment_order_checkout_url(@checkout.order, :payment_method => payment_method)
