@@ -1,4 +1,4 @@
-module Spree::MPay
+module Spree::Mpay
   def self.included(target)
     target.before_filter :redirect_to_mpay, :only => [:update]
   end
@@ -36,7 +36,7 @@ module Spree::MPay
 
     payment_method = PaymentMethod.find(params[:checkout][:payments_attribute].first[:payment_method_id])
 
-    if payment_method.kind_of?(BillingIntegration::MPay)
+    if payment_method.kind_of?(BillingIntegration::Mpay)
       redirect_to mpay_payment_order_checkout_url(@checkout.order, :payment_method => payment_method)
     end
   end
@@ -65,7 +65,7 @@ module Spree::MPay
           :address1 => order.ship_address.address1,
           :address2 => order.ship_address.address2,
           :city => oder.ship_address.city,
-          :state => order.ship_address.state.nil? order.ship_address.state_name.to_s : order.ship_address.state.abbr,
+          :state => order.ship_address.state.nil? ? order.ship_address.state_name.to_s : order.ship_address.state.abbr,
           :country => order.ship_address.country.iso,
           :zip => order.ship_adress.zipcode,
           :phone => order.ship_address.phone

@@ -5,12 +5,24 @@ module ActiveMerchant
   module Billing
     class MPayGateway < Gateway
 
-      self.test_redirect_url = '';
-      self.redirect_url = '';
+      self.test_mode = true
+      self.test_redirect_url = 'https://test.mPAY24.com/app/bin/etpv5';
+      self.test_merchant_id = '92035'
+      self.production_merchant_id = '72035'
+      self.production_redirect_url = 'https://www.mpay24.com/app/bin/etpv5';
+
+      # move this to the other thing?
+      def gateway_url
+        self.test_mode == true ? self.test_redirect_url : self.production_redirect_url
+      end
+
+      def merchant_id
+        self.test_mode == true ? self.test_merchant_id : self.production_merchant_id
+      end
 
       def setup_authorization(money, options = {})
         # TODO: howto use the options infrastructure
-        merchant_id = '123'
+        merchant_id = merchant_id
         operation = 'SELECTPAYMENT'
 
         # TODO: merge options
