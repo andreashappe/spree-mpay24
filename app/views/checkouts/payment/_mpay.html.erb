@@ -1,5 +1,1 @@
-<h1>Here we will add the mpay24 iframe</h1>
-
-<p>
-  <iframe src="<%= BillingIntegration::Mpay.generate_url(nil) %>" />
-</p>
+<iframe src="<%= BillingIntegration::Mpay.current.generate_url(@order) %>" width=700px height=500px />
