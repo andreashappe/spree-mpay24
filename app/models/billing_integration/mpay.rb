@@ -137,9 +137,14 @@ class BillingIntegration::Mpay < BillingIntegration
         xml.tag! 'Email', order.email
       end
       xml.tag! 'URL' do
+        # use the mpay24 controller for now: the checkout
+        # process will end with the payment success message
+        # provided by mpay24 (which in turn is embedded
+        # within our site)
+        #xml.tag! 'Success', 'some-confirmation-url'
+
         # TODO: write controller and provide 'real' URLs
-        xml.tag! 'Success', 'some-confirmation-url'
-        xml.tag! 'Confirmation', 'the-callback-url'
+        xml.tag! 'Confirmation', 'http://trageboutiquedev.com/mpay_confirmation'
       end
     end
 
