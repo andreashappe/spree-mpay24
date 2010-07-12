@@ -1,3 +1,4 @@
 de:
   test_merchant_id: Merchant ID (Testmodus)
   production_merchant_id: Merchant ID (Production)
+  notification_url: Benachrichtigungs-URL

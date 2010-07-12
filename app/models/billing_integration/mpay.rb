@@ -9,6 +9,7 @@ class BillingIntegration::Mpay < BillingIntegration
 
   preference :production_merchant_id, :string
   preference :test_merchant_id, :string
+  preference :notification_url, :string, :default =>  'http://trageboutiquedev.com/mpay_confirmation'
 
   def provider_class
     ActiveMerchant::Billing::MpayGateway
@@ -143,8 +144,7 @@ class BillingIntegration::Mpay < BillingIntegration
         # within our site)
         #xml.tag! 'Success', 'some-confirmation-url'
 
-        # TODO: write controller and provide 'real' URLs
-        xml.tag! 'Confirmation', 'http://trageboutiquedev.com/mpay_confirmation'
+        xml.tag! 'Confirmation', preferred_notification_url
       end
     end
 

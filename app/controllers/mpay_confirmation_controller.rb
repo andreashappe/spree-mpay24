@@ -1,7 +1,7 @@
 # TODO: howto secure this controller?
 # TODO: can we check againt an IP block?
 # TODO: integrate this controller into the appliation
-class MpayConfirmationController < Controller < Admin::BaseController
+class MpayConfirmationController < Spree::BaseController
 
   # possible transaction states
   TRANSACTION_STATES = ["ERROR", "RESERVED", "BILLED", "REVERSED", "CREDITED", "SUSPENDED"]
@@ -24,21 +24,27 @@ class MpayConfirmationController < Controller < Admin::BaseController
           :payment_method_id => nil
         )
 
+        price = order.total
+        confirmed_price = params["PRICE"].to_i/100.0
+
+        order.complete!
+
         # do the state change
-        if order.price == params["PRICE"]
-          order.pay
-          order.save!
-        elsif order.price < params["PRICE"]
-          order.over_pay
-          order.save!
-        elsif order.price > params["PRICE"]
-          order.under_pay
-          order.save!
+        if price == confirmed_price
+          order.pay!
+        elsif price < confirmed_price
+          order.over_pay!
+        elsif price > confirmed_price
+          order.under_pay!
+        else
+          raise "#{price} vs. #{confirmed price}".inspect
         end
       end
     else
       raise "what is going on?".inspect
     end
+
+    render :text => "OK", :status => 200
 
     # Other fields (how to use them?):
     # P_TYPE
@@ -68,7 +74,7 @@ class MpayConfirmationController < Controller < Admin::BaseController
   end
 
   def find_order(tid)
-    if !params.include?(tid) || !(order = Order.find(tid)).nil?
+    if (order = Order.find(tid)).nil?
       raise "could not find order: #{tid}".inspect
     end
 
@@ -76,6 +82,6 @@ class MpayConfirmationController < Controller < Admin::BaseController
   end
 
   def verify_currency(order, currency)
-    order.currency == currency
+    "EUR" == currency
   end
 end
