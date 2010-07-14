@@ -1,12 +1,20 @@
-class MpayCallbacksController < Controller < Admin::BaseController
+class MpayCallbacksController < Spree::BaseController
   def index
-    # there should be a 'TID' option which should map something within
-    # our order database.. so we can dipslay the right confirmation
-    raise params.inspect
+    order = Order.find(:first, :conditions => { :id => params["TID"]})
 
-    # TODO: also we should mark the payment/order as 'payed' somehow
+    if order
+      if order.state == "in_progress"
+        order.complete!
+      end
 
-    render :partial => 'shared/mpay_success',
-           :locals => { :order => Order.find(params[:tid]) }
+      if order.state == "new"
+        order.pay!
+      end
+
+      render :partial => 'shared/mpay_success',
+             :locals => { :order => order }
+    else
+      raise params.inspect
+    end
   end
 end

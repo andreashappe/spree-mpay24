@@ -9,7 +9,7 @@ class BillingIntegration::Mpay < BillingIntegration
 
   preference :production_merchant_id, :string
   preference :test_merchant_id, :string
-  preference :notification_url, :string, :default =>  'http://trageboutiquedev.com/mpay_confirmation'
+  preference :url, :string, :default =>  'http://trageboutiquedev.com/'
 
   def provider_class
     ActiveMerchant::Billing::MpayGateway
@@ -138,13 +138,8 @@ class BillingIntegration::Mpay < BillingIntegration
         xml.tag! 'Email', order.email
       end
       xml.tag! 'URL' do
-        # use the mpay24 controller for now: the checkout
-        # process will end with the payment success message
-        # provided by mpay24 (which in turn is embedded
-        # within our site)
-        #xml.tag! 'Success', 'some-confirmation-url'
-
-        xml.tag! 'Confirmation', preferred_notification_url
+        xml.tag! 'Success', "#{preferred_url}/mpay_callbacks"
+        xml.tag! 'Confirmation', "#{preferred_url}/mpay_confirmation"
       end
     end
 
