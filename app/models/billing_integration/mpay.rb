@@ -101,17 +101,15 @@ class BillingIntegration::Mpay < BillingIntegration
           end
         end
 
-        # TODO: why is this 0
-        taxes = order.tax_charges.sum(:amount)
-        xml.tag! 'Tax', sprintf("%.2f", taxes)
+        order.update_totals
 
-        # TODO why is this 0
+        xml.tag! 'Tax', sprintf("%.2f", order.tax_total)
+
+        # TODO is this the same as order.credit_total?
         discounts = order.coupon_credits.sum(:amount)
         xml.tag! 'Discount', sprintf("%.2f", discounts)
 
-        # TODO why is this 0 (amount -> nil)
-        shipment_costs = order.shipping_charges.sum(:amount)
-        xml.tag! 'ShippingCosts', sprintf("%.2f", shipment_costs)
+        xml.tag! 'ShippingCosts', sprintf("%.2f", order.ship_total)
       end
 
       xml.tag! 'Price', sprintf("%.2f", order.total)
