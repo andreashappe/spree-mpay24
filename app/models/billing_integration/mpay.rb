@@ -10,6 +10,11 @@ class BillingIntegration::Mpay < BillingIntegration
   preference :production_merchant_id, :string
   preference :test_merchant_id, :string
   preference :url, :string, :default =>  'http://trageboutiquedev.com/'
+  preference :secret_phrase, :string
+
+  TEST_REDIRECT_URL = 'https://test.mPAY24.com/app/bin/etpv5'
+  PRODUCTION_REDIRECT_URL = 'https://www.mpay24.com/app/bin/etpv5'
+  MPAY24_IP = "213.164.25.245"
 
   def provider_class
     ActiveMerchant::Billing::MpayGateway
@@ -23,8 +28,23 @@ class BillingIntegration::Mpay < BillingIntegration
                   })
   end
 
-  TEST_REDIRECT_URL = 'https://test.mPAY24.com/app/bin/etpv5'
-  PRODUCTION_REDIRECT_URL = 'https://www.mpay24.com/app/bin/etpv5'
+  def verify_ip(request)
+    if request.env['REMOTE_ADDR'] != MPAY24_IP
+      raise "invalid originator IP of #{request.env['REMOTE_ADDR']}".inspect
+    end
+  end
+
+  def find_order(tid)
+    if prefers_secret_phrase?
+      if tid.starts_with?(preferred_secret_phrase)
+        tid = tid.gsub(/^#{preferred_secret_phrase}_/, "")
+      else
+        raise "unknown secret phrase: #{tid}".inspect
+      end
+    end
+
+    Order.find(:first, :conditions => { :id => tid })
+  end
 
   def gateway_url
     prefers_test_mode? ? TEST_REDIRECT_URL : PRODUCTION_REDIRECT_URL
@@ -64,6 +84,14 @@ class BillingIntegration::Mpay < BillingIntegration
     result
   end
 
+  def generate_tid(order_id)
+    if prefers_secret_phrase?
+      "#{preferred_secret_phrase}_#{order_id}"
+    else
+      order_id
+    end
+  end
+
   def send_request(merchant_id, cmd)
     url = URI.parse(gateway_url)
     request = Net::HTTP::Post.new(url.path,{"Content-Type"=>"text/xml"})
@@ -89,7 +117,7 @@ class BillingIntegration::Mpay < BillingIntegration
     xml = Builder::XmlMarkup.new
     xml.instruct! :xml, :version=>"1.0", :encoding=>"UTF-8"
     xml.tag! 'Order' do
-      xml.tag! 'Tid', order.id
+      xml.tag! 'Tid', generate_tid(order.id)
       xml.tag! 'ShoppingCart' do
         xml.tag! 'Description', order.number
 
