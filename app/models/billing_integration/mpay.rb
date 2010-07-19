@@ -15,6 +15,7 @@ class BillingIntegration::Mpay < BillingIntegration
   TEST_REDIRECT_URL = 'https://test.mPAY24.com/app/bin/etpv5'
   PRODUCTION_REDIRECT_URL = 'https://www.mpay24.com/app/bin/etpv5'
   MPAY24_IP = "213.164.25.245"
+  MPAY_24_TEST_IP = "213.164.23.169"
 
   def provider_class
     ActiveMerchant::Billing::MpayGateway
@@ -29,7 +30,7 @@ class BillingIntegration::Mpay < BillingIntegration
   end
 
   def verify_ip(request)
-    if request.env['REMOTE_ADDR'] != MPAY24_IP
+    if request.env['REMOTE_ADDR'] != mpay24_ip
       raise "invalid originator IP of #{request.env['REMOTE_ADDR']}".inspect
     end
   end
@@ -48,6 +49,10 @@ class BillingIntegration::Mpay < BillingIntegration
 
   def gateway_url
     prefers_test_mode? ? TEST_REDIRECT_URL : PRODUCTION_REDIRECT_URL
+  end
+
+  def mpay24_ip
+    prefers_test_mode? ? MPAY_24_TEST_IP : MPAY24_IP
   end
 
   def merchant_id
