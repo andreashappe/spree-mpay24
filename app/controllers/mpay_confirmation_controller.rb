@@ -1,6 +1,3 @@
-# TODO: howto secure this controller?
-# TODO: can we check againt an IP block?
-# TODO: integrate this controller into the appliation
 class MpayConfirmationController < Spree::BaseController
 
   # possible transaction states
@@ -8,11 +5,14 @@ class MpayConfirmationController < Spree::BaseController
 
   # Confirmation interface is a GET request
   def show
+
+    BillingIntegration::Mpay.current.verify_ip(request)
+
     check_operation(params["OPERATION"])
     check_status(params["STATUS"])
 
     # get the order
-    order = find_order(params["TID"])
+    order = BillingIntegration::Mpay.current.find_order(params["TID"])
 
     if params["STATUS"] == "BILLED"
       # check if the retrieved order is the same as the outgoing one

@@ -1,20 +1,13 @@
 class MpayCallbacksController < Spree::BaseController
   def index
-    order = Order.find(:first, :conditions => { :id => params["TID"]})
 
-    if order
-      if order.state == "in_progress"
-        order.complete!
-      end
+    @order = BillingIntegration::Mpay.current.find_order(params["TID"])
+    
+    order_params = {:checkout_complete => true}
+    session[:order_id] = nil
+    flash[:commerce_tracking] = "Track Me in GA"
 
-      if order.state == "new"
-        order.pay!
-      end
-
-      render :partial => 'shared/mpay_success',
-             :locals => { :order => order }
-    else
-      raise params.inspect
-    end
+    # TODO: this should not be rendered into the IFRAME but in the surrounding page
+    redirect_to order_url(@order, {:checkout_complete => true, :order_token => @order.token})
   end
 end
