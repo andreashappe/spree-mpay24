@@ -15,7 +15,7 @@ class BillingIntegration::Mpay < BillingIntegration
   TEST_REDIRECT_URL = 'https://test.mPAY24.com/app/bin/etpv5'
   PRODUCTION_REDIRECT_URL = 'https://www.mpay24.com/app/bin/etpv5'
   MPAY24_IP = "213.164.25.245"
-  MPAY_24_TEST_IP = "213.164.23.169"
+  MPAY24_TEST_IP = "213.164.23.169"
 
   def provider_class
     ActiveMerchant::Billing::MpayGateway
@@ -31,7 +31,7 @@ class BillingIntegration::Mpay < BillingIntegration
 
   def verify_ip(request)
     if request.env['REMOTE_ADDR'] != mpay24_ip
-      raise "invalid originator IP of #{request.env['REMOTE_ADDR']}".inspect
+      raise "invalid originator IP of #{request.env['REMOTE_ADDR']} vs #{mpay24_ip}".inspect
     end
   end
 
@@ -52,7 +52,7 @@ class BillingIntegration::Mpay < BillingIntegration
   end
 
   def mpay24_ip
-    prefers_test_mode? ? MPAY_24_TEST_IP : MPAY24_IP
+    prefers_test_mode? ? MPAY24_TEST_IP : MPAY24_IP
   end
 
   def merchant_id
@@ -71,6 +71,8 @@ class BillingIntegration::Mpay < BillingIntegration
     # if everything did work out: return the link url. Otherwise
     # output an ugly exception (at least we will get notified)
     if result["STATUS"] == "OK" && result["RETURNCODE"] == "REDIRECT"
+      order.created_at = Time.now
+      order.save!
       return result["LOCATION"].chomp
     else
       raise response.body.inspect
