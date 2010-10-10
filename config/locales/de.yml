@@ -3,3 +3,5 @@ de:
   production_merchant_id: Merchant ID (Production)
   url: Basis-URL
   secret_phrase: this is added to the sent TID. As long as all communication is done through SSL/TLS encryption this prevents injection attacks.
+  CC: "Kreditkarte"
+  Unknown: "Unbekannt"
