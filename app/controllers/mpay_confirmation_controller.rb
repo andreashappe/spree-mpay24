@@ -14,15 +14,33 @@ class MpayConfirmationController < Spree::BaseController
     # get the order
     order = BillingIntegration::Mpay.current.find_order(params["TID"])
 
-    if params["STATUS"] == "BILLED"
+    case params["STATUS"]
+    when "BILLED"
       # check if the retrieved order is the same as the outgoing one
       if verify_currency(order, params["CURRENCY"])
+
+        # create new payment object
+        payment_details = MPaySource.create (
+          :p_type => params["P_TYPE"],
+          :brand => params["BRAND"],
+          :mpayid => params["MPAYTID"]
+        )
 
         # TODO log the payment
         order.checkout.payments.create(
           :amount => params["PRICE"],
           :payment_method_id => nil
         )
+
+        payment = order.checkout.payments.first
+        payment.source = payment_details
+        payment.save!
+
+        payment_details = payment
+        payment_details.save!
+
+        payment.source = payment_details
+        payment.save!
 
         price = order.total
         confirmed_price = params["PRICE"].to_i/100.0
@@ -40,16 +58,15 @@ class MpayConfirmationController < Spree::BaseController
           raise "#{price} vs. #{confirmed price}".inspect
         end
       end
+    when "RESERVED"
+      raise "send the confirmation request out".inspect
     else
       raise "what is going on?".inspect
     end
 
     render :text => "OK", :status => 200
-
+ 
     # Other fields (how to use them?):
-    # P_TYPE
-    # BRAND
-    # MPAYTID
     # USER_FIELD
     # LANGUAGE
     # APPR_CODE

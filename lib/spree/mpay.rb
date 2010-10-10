@@ -36,7 +36,7 @@ module Spree::Mpay
 
     load_object
 
-    payment_method = PaymentMethod.find(params[:checkout][:payments_attributes].first[:payment_method_id])
+    payment_method = PaymentMethod.find_by_name("mpay")
 
     raise payment_method.inspect
 
