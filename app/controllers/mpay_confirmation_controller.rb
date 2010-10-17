@@ -26,21 +26,20 @@ class MpayConfirmationController < Spree::BaseController
           :mpayid => params["MPAYTID"]
         )
 
+        payment_details.save!
+
         # TODO log the payment
         order.checkout.payments.create(
           :amount => params["PRICE"],
-          :payment_method_id => nil
+          :payment_method_id => nil,
+          :source => payment_details
         )
 
         payment = order.checkout.payments.first
-        payment.source = payment_details
         payment.save!
 
-        payment_details = payment
+        payment_details.payment = payment
         payment_details.save!
-
-        payment.source = payment_details
-        payment.save!
 
         price = order.total
         confirmed_price = params["PRICE"].to_i/100.0

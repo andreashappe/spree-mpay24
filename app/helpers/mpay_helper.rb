@@ -1,5 +1,4 @@
 module MpayHelper
-  
   def humanize_p_type(p_type)
     case p_type
     when "CC"
