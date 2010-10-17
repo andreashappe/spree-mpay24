@@ -7,12 +7,14 @@ class MpayGatewayExtension < Spree::Extension
   url "http://starseeders.net"
 
   def activate
+
     # load billing stuff
     BillingIntegration::Mpay.register
    
-    # integrate custom checkout/payment logic
-    CheckoutsController.class_eval do
-      include Spree::Mpay
+    # integrate our god-frickin' view helper
+    Spree::BaseController.class_eval do
+      helper MpayHelper
     end
   end
 end
+
