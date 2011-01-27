@@ -1,8 +1,6 @@
 require 'net/https'
 require 'uri'
 
-# TODO: why is only VISA displayed?
-
 # Integrate our payment gateway with spree. This is needed
 # to allow configuration through spree's web interface, etc.
 class BillingIntegration::Mpay < BillingIntegration
@@ -66,6 +64,7 @@ class BillingIntegration::Mpay < BillingIntegration
 
     # send the HTTP request
     response = send_request(merchant_id, cmd)
+
     result = parse_result(response)
 
     # if everything did work out: return the link url. Otherwise
