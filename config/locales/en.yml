@@ -1,0 +1,7 @@
+en:
+  test_merchant_id: Merchant ID (Test mode)
+  production_merchant_id: Merchant ID (Production mode)
+  url: Base-URL
+  secret_phrase: Salt
+  CC: Creditcard
+  Unknown: Unknown
