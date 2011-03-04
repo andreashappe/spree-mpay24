@@ -20,48 +20,45 @@ class MpayConfirmationController < Spree::BaseController
       if verify_currency(order, params["CURRENCY"])
 
         # create new payment object
-        payment_details = MPaySource.create (
+        # TODO: we fail here
+        payment_details = MPaySource.create ({
           :p_type => params["P_TYPE"],
           :brand => params["BRAND"],
           :mpayid => params["MPAYTID"]
-        )
+	})
 
         payment_details.save!
 
-        payment_method = PaymentMethod.find(:first, 
-                                            :conditions => { :type => "BillingIntegration::Mpay",
-                                                             :environment => RAILS_ENV
-                                                         }
-                                         )
+        payment_method = PaymentMethod.where(:type => "BillingIntegration::Mpay").where(:environment => RAILS_ENV.to_s).first
+        confirmed_price = params["PRICE"].to_i/100.0
 
         # TODO log the payment
-        order.checkout.payments.create(
-          :amount => params["PRICE"],
+        payment = order.payments.create({
+          :amount => confirmed_price,
           :payment_method_id => payment_method,
           :source => payment_details
-        )
+        })
 
-        payment = order.checkout.payments.first
+        # TODO: create this before (when sending the request?)
+        payment.started_processing!
+        payment.complete!
         payment.save!
 
         payment_details.payment = payment
         payment_details.save!
+        order.update!
 
-        price = order.total
-        confirmed_price = params["PRICE"].to_i/100.0
-
-        order.complete!
-
+        # price = order.total
         # do the state change
-        if price == confirmed_price
-          order.pay!
-        elsif price < confirmed_price
-          order.over_pay!
-        elsif price > confirmed_price
-          order.under_pay!
-        else
-          raise "#{price} vs. #{confirmed price}".inspect
-        end
+        #if price == confirmed_price
+        #  order.pay!
+        #elsif price < confirmed_price
+        #  order.over_pay!
+        #elsif price > confirmed_price
+        #  order.under_pay!
+        #else
+        #  raise "#{price} vs. #{confirmed price}".inspect
+        #end
       end
     when "RESERVED"
       raise "send the confirmation request out".inspect
@@ -70,15 +67,6 @@ class MpayConfirmationController < Spree::BaseController
     end
 
     render :text => "OK", :status => 200
- 
-    # Other fields (how to use them?):
-    # USER_FIELD
-    # LANGUAGE
-    # APPR_CODE
-    # PROFILE_STATUS
-    # FILTER_STATUS
-    # SUSPENDED_REASON
-    # MSG
   end
 
   private
