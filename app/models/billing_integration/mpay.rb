@@ -27,7 +27,19 @@ class BillingIntegration::Mpay < BillingIntegration
 
   def verify_ip(request)
     if request.env['REMOTE_ADDR'] != mpay24_ip
-      raise "invalid originator IP of #{request.env['REMOTE_ADDR']} vs #{mpay24_ip}".inspect
+      if request.env['REMOTE_ADDR'] == "127.0.0.1"
+        #maybe we've gotten forwarded by the nginx reverse proxy
+	if request.env.include?('HTTP_X_FORWARDED_FOR')
+          ips = request.env['HTTP_X_FORWARDED_FOR'].split(',').map(&:strip)
+          if ips[1] != mpay24_ip
+            raise "invalid forwarded originator IP of x#{ips[1]}x vs #{mpay24_ip}".inspect
+          end 
+        else
+          raise request.env.inspect
+        end
+      else
+        raise "invalid originator IP of #{request.env['REMOTE_ADDR']} vs #{mpay24_ip}".inspect
+      end
     end
   end
 
@@ -80,6 +92,7 @@ class BillingIntegration::Mpay < BillingIntegration
 
   def parse_result(response)
     result = {}
+
     response.body.split('&').each do |part|
       key, value = part.split("=")
       result[key] = CGI.unescape(value)
