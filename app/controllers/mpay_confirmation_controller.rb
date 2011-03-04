@@ -20,7 +20,6 @@ class MpayConfirmationController < Spree::BaseController
       if verify_currency(order, params["CURRENCY"])
 
         # create new payment object
-        # TODO: we fail here
         payment_details = MPaySource.create ({
           :p_type => params["P_TYPE"],
           :brand => params["BRAND"],
@@ -30,16 +29,16 @@ class MpayConfirmationController < Spree::BaseController
         payment_details.save!
 
         payment_method = PaymentMethod.where(:type => "BillingIntegration::Mpay").where(:environment => RAILS_ENV.to_s).first
-        confirmed_price = params["PRICE"].to_i/100.0
 
         # TODO log the payment
-        payment = order.payments.create({
-          :amount => confirmed_price,
+        order.checkout.payments.create({
+          :amount => params["PRICE"],
           :payment_method_id => payment_method,
           :source => payment_details
-        })
+	})
 
         # TODO: create this before (when sending the request?)
+	# TODO: but do we even want this?
         payment.started_processing!
         payment.complete!
         payment.save!
@@ -47,18 +46,6 @@ class MpayConfirmationController < Spree::BaseController
         payment_details.payment = payment
         payment_details.save!
         order.update!
-
-        # price = order.total
-        # do the state change
-        #if price == confirmed_price
-        #  order.pay!
-        #elsif price < confirmed_price
-        #  order.over_pay!
-        #elsif price > confirmed_price
-        #  order.under_pay!
-        #else
-        #  raise "#{price} vs. #{confirmed price}".inspect
-        #end
       end
     when "RESERVED"
       raise "send the confirmation request out".inspect
