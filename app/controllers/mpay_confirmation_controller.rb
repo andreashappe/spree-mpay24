@@ -20,26 +20,22 @@ class MpayConfirmationController < Spree::BaseController
       if verify_currency(order, params["CURRENCY"])
 
         # create new payment object
-        payment_details = MPaySource.create (
+        payment_details = MPaySource.create ({
           :p_type => params["P_TYPE"],
           :brand => params["BRAND"],
           :mpayid => params["MPAYTID"]
-        )
+	})
 
         payment_details.save!
 
-        payment_method = PaymentMethod.find(:first, 
-                                            :conditions => { :type => "BillingIntegration::Mpay",
-                                                             :environment => RAILS_ENV
-                                                         }
-                                         )
+        payment_method = PaymentMethod.where(:type => "BillingIntegration::Mpay").where(:environment => RAILS_ENV.to_s).first
 
         # TODO log the payment
-        order.checkout.payments.create(
+        order.checkout.payments.create({
           :amount => params["PRICE"],
           :payment_method_id => payment_method,
           :source => payment_details
-        )
+	})
 
         payment = order.checkout.payments.first
         payment.save!
@@ -70,15 +66,6 @@ class MpayConfirmationController < Spree::BaseController
     end
 
     render :text => "OK", :status => 200
- 
-    # Other fields (how to use them?):
-    # USER_FIELD
-    # LANGUAGE
-    # APPR_CODE
-    # PROFILE_STATUS
-    # FILTER_STATUS
-    # SUSPENDED_REASON
-    # MSG
   end
 
   private
