@@ -20,11 +20,9 @@ class BillingIntegration::Mpay < BillingIntegration
   end
 
   def self.current
-    BillingIntegration::Mpay.first(
-                  :conditions => {
-                        :environment => RAILS_ENV,
-                        :active => true
-                  })
+    # I'm not sure why I'm needing RAILS_ENV.to_s. It looks like a string
+    # but cannot otherwise be compared to another string
+    BillingIntegration::Mpay.where(:active => true).where(:environment => RAILS_ENV.to_s).first
   end
 
   def verify_ip(request)
@@ -140,7 +138,7 @@ class BillingIntegration::Mpay < BillingIntegration
         xml.tag! 'Tax', sprintf("%.2f", order.tax_total)
 
         # TODO is this the same as order.credit_total?
-        discounts = order.coupon_credits.sum(:amount)
+        discounts = order.adjustment_total
         xml.tag! 'Discount', sprintf("%.2f", discounts)
 
         xml.tag! 'ShippingCosts', sprintf("%.2f", order.ship_total)
