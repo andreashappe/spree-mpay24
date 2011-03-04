@@ -1,5 +1,0 @@
-success_page
-* output some message
-* clear basket
-
-Howto get a new order id?
