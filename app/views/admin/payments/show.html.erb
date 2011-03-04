@@ -1,0 +1,18 @@
+<%= render :partial => 'admin/shared/order_tabs', :locals => {:current => "Payments"} %>
+
+<h2><%= t("activerecord.models.#{@object.class.to_s.underscore}.one") %></h2>
+
+<p>
+  <label><%= t("amount") %>:</label></td>
+  <% if @payment.source_type == 'MPaySource' %>
+    <%= object.amount/100 %>
+  <% else %>
+    <%= object.amount %>
+  <% end %>
+</p>
+
+<% if @payment.payment_method.nil? %>
+  <%= render "admin/payments/source_views/#{PaymentMethod.find_by_id(842616224).method_type}", :payment => object %>
+<% else %>
+  <%= render "admin/payments/source_views/#{@payment.payment_method.method_type}", :payment => object %>
+<% end %>
