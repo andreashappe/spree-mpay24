@@ -33,7 +33,17 @@ directory:
 Spree 0.40
 ----------
 
-This plugin will be released as a "real" gem soon.
+Install the gem from [rubygems](https://rubygems.org/gems/mpay_gateway) through
+
+<blockquote>
+	gem install mpay_gateway
+</blockquote>
+
+And include it in your Project's Gemfile
+
+<blockquote>
+	
+</blockquote>
 
 Configuration
 =============
