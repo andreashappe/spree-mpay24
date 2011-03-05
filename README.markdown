@@ -42,7 +42,7 @@ Install the gem from [rubygems](https://rubygems.org/gems/mpay_gateway) through
 And include it in your Project's Gemfile
 
 <blockquote>
-	
+	gem 'mpay_gateway'
 </blockquote>
 
 Configuration
