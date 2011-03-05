@@ -1,15 +1,55 @@
-= Mpay Gateway
+Mpay Gateway
+============
 
-This is the prototype of a mpay24.at payment gateway.
+This integrates the [mPAY24](https://www.mpay24.com/web/en/mpay24-payment-platform.html)
+payment gateway into Spree. mPAY24 is an European credit card and mobile phone payment
+processing gateway.
 
-It cannot use the normale gateway integration stuff as it is based upon
-a HTTP redirect scheme (which offers security benefits).
+The plugin takes care of basic security:
 
-= License stuff =
+* transferred data is secured by a salt
+* no credit card data is stored within the spree web shop
+* the identity of the confirmation callback is verified
 
-mpay24.at payment gateway integration for spree
+The plugin was tested with multiple web shops implemented by [we](http://wwww.starseeders.net).
 
-Copyright © 2010 Andreas Happe <andreashappe@snikt.net.
+Installation
+============
+
+This plugin has been tested with Spree 0.11.2 and Spree 0.40.3.
+
+Spree 0.11
+----------
+
+Install it as a git submodule. To do this execute the following within your application
+directory:
+
+<blockquote>
+ git clone git://github.com/andreashappe/spree-mpay24 vendor/extensions/mpay_gateway
+ cd vendor/extensions/mpay_gateway
+ git checkout spree-0.11
+</blockquote>
+
+Spree 0.40
+----------
+
+This plugin will be released as a "real" gem soon.
+
+Configuration
+=============
+
+Add a payment method of provider type BillingIntegration:Mpay. The
+payment method comes with a configuration pane which allows setting
+of basic options as:
+
+* merchant id (for both testing as well as production mpay mode)
+* shared secret (which is used as salt to secure the communication)
+* base url (the URL of your website, this is needed for the confirmation callback from mPAY24)
+
+License stuff
+=============
+
+Copyright © 2010 Andreas Happe <andreashappe@starseeders.net>
 
 This plugin is free software; you can redistribute it and/or
 modify it either under the terms of the GNU Lesser General Public
