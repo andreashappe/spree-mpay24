@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = 'mpay_gateway'
-  s.version     = '0.41'
+  s.version     = '0.43'
   s.summary     = 'MPay24 Payment gateway for Spree 0.40+'
   s.description = 'Integrates the mpay24 credit card and online payment processing system into the spree web shop'
   s.required_ruby_version = '>= 1.8.7'

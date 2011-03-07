@@ -31,7 +31,7 @@ class MpayConfirmationController < Spree::BaseController
         payment_method = PaymentMethod.where(:type => "BillingIntegration::Mpay").where(:environment => RAILS_ENV.to_s).first
 
         # TODO log the payment
-        order.checkout.payments.create({
+        payment = order.payments.create({
           :amount => params["PRICE"],
           :payment_method_id => payment_method,
           :source => payment_details
