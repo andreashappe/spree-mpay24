@@ -151,7 +151,8 @@ class BillingIntegration::Mpay < BillingIntegration
         xml.tag! 'Tax', sprintf("%.2f", order.tax_total)
 
         # TODO is this the same as order.credit_total?
-        discounts = order.adjustment_total
+        discounts = order.adjustment_total - order.tax_total - order.ship_total
+
         xml.tag! 'Discount', sprintf("%.2f", discounts)
 
         xml.tag! 'ShippingCosts', sprintf("%.2f", order.ship_total)
