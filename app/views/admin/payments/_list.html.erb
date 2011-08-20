@@ -10,14 +10,14 @@
       <td><%= payment.created_at.to_s(:date_time24) %></td>
       <td>
         <% if payment.source_type == 'MPaySource' %>
-          <%= number_to_currency(payment.amount/100) %>
+          <%= number_to_currency(payment.amount) %>
         <% else %>
           <%= number_to_currency(payment.amount) %>
         <% end %>  
       </td>
       <td><%= payment_method_name payment %></td>
       <td>
-        <%= link_to t('show'), admin_order_payment_path(@order, payment) %>
+        <!-- <%= link_to t('show'), admin_order_payment_path(@order, payment) %> -->
         <% payment.actions.each do |action| %>
           <%= link_to t(action), fire_admin_order_payment_path(@order, payment, :e => action), :method => :put, :confirm => t('are_you_sure') %>
         <% end %>
