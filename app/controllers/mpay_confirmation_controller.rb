@@ -46,7 +46,7 @@ class MpayConfirmationController < Spree::BaseController
         payment_details.payment = payment
         payment_details.save!
         order.update!
-	order.finalize!
+        order.complete!
       end
     when "RESERVED"
       raise "send the confirmation request out".inspect
