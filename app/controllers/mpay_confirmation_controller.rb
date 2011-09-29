@@ -49,7 +49,7 @@ class MpayConfirmationController < Spree::BaseController
         order.complete!
       end
     when "RESERVED"
-      raise "send the confirmation request out".inspect
+	logger.info "we have auto-completion for confirmation requests, so do nothing"
     else
       raise "what is going on?".inspect
     end
