@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
   s.description = 'Integrates the mpay24 credit card and online payment processing system into the spree web shop'
   s.required_ruby_version = '>= 1.8.7'
 
-  s.author            = 'Andreas Happe'
+  s.authors           = ['Andreas Happe']
   s.email             = 'andreashappe@starseeders.net'
   s.homepage          = 'http://github.com/andreashappe/spree-mpay24'
 
