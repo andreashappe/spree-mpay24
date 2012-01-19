@@ -1,6 +1,17 @@
 <p>
- Hinweis: Ihre Daten werden mittels sicherer SSL-Verbindung verschlüsselt übertragen und sind so vor unberechtigten Zugriffen geschützt
+ <b>Sichere Bezahlung:</b> Deine Kreditkarten-Daten werden mittels <b>sicherer SSL-Verbindung</b> verschlüsselt an unseren Zahlungsverkehrs-Dienstleister mPAY24 übertragen. Deine Daten sind so <b>vor unberechtigten Zugriff geschützt</b>. Nähere Informationen, wie du das überprüfen kannst, findest du weiter unten auf dieser Seite.
  </p>
 
-<iframe src="<%= BillingIntegration::Mpay.current.generate_url(@order) %>" width=680px height=500px>
-</iframe>
+
+ <iframe src="<%= BillingIntegration::Mpay.current.generate_url(@order) %>" width=680px height=400px>
+ </iframe>
+ 
+<p>
+    Wenn du überprüfen willst, ob deine Daten auch wirklich SSL-geschützt sind, kannst du das auf einfach Weise wie folgt durchführen:<br/>
+     Klicke mit der <b>rechten Maustaste</b> in den grauen Bereich des Zahlungssysteme-Frame oberhalb dieses Textes. Wähle dann je nach Browser:<br/><br/>
+
+    Firefox: <b>Aktueller Frame</b> und dann: <b>Frame-Informationen anzeigen</b><br/>
+    Chrome: <b>Frame-Informationen anzeigen</b><br/>
+    Internet Explorer: <b>Eigenschaften</b><br/><br/>
+     Anhand der dort angegebenen <b>https-Adresse</b> (URL) erkennst du, dass alle in diesem Frame eingegebenen Daten verschlüsselt übertragen werden (https steht für verschlüsselte Verbindungen). Beim Chrome-Browser werden Infos zu SSL und zum <b>VeriSign-Zertifikat</b> angezeigt.
+</p>
