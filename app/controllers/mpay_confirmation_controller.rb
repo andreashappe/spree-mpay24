@@ -15,6 +15,7 @@ class MpayConfirmationController < Spree::BaseController
     order = BillingIntegration::Mpay.current.find_order(params["TID"])
 
     case params["STATUS"]
+    when "CREDITED"
     when "BILLED"
       # check if the retrieved order is the same as the outgoing one
       if verify_currency(order, params["CURRENCY"])
