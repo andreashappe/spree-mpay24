@@ -16,4 +16,9 @@ module MpayHelper
     
     "#{humanize_p_type(order.checkout.payment.source.p_type)}: #{order.checkout.payment.source.brand}"
   end
+
+  def spree_mpay_iframe(order, width=680, height=500)
+    mpay = Spree::BillingIntegration::Mpay.where(:active => true).where(:environment => Rails.env.to_s).first
+    "<iframe src=\"#{mpay.generate_url(@order)}\" width=#{width}px height=#{height}px></iframe>"
+  end
 end

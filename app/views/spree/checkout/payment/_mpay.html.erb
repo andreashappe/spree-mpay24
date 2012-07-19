@@ -2,5 +2,4 @@
  Hinweis: Ihre Daten werden mittels sicherer SSL-Verbindung verschlüsselt übertragen und sind so vor unberechtigten Zugriffen geschützt
  </p>
 
-<iframe src="<%= BillingIntegration::Mpay.current.generate_url(@order) %>" width=680px height=500px>
-</iframe>
+<%= spree_mpay_iframe(@order, 680, 500) %>

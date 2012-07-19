@@ -3,10 +3,13 @@ class MpayConfirmationController < Spree::BaseController
   # possible transaction states
   TRANSACTION_STATES = ["ERROR", "RESERVED", "BILLED", "REVERSED", "CREDITED", "SUSPENDED"]
 
+  MPAY24_IP = "213.164.25.245"
+  MPAY24_TEST_IP = "213.164.23.169"
+
   # Confirmation interface is a GET request
   def show
 
-    BillingIntegration::Mpay.current.verify_ip(request)
+    verify_ip(request)
 
     check_operation(params["OPERATION"])
     check_status(params["STATUS"])
@@ -82,4 +85,23 @@ class MpayConfirmationController < Spree::BaseController
   def verify_currency(order, currency)
     "EUR" == currency
   end
+
+  def verify_ip(request)
+    if [MPAY24_IP, MPAY24_TEST_IP].include?(request.env['REMOTE_ADDR'])
+      if request.env['REMOTE_ADDR'] == "127.0.0.1"
+        #maybe we've gotten forwarded by the nginx reverse proxy
+	if request.env.include?('HTTP_X_FORWARDED_FOR')
+          ips = request.env['HTTP_X_FORWARDED_FOR'].split(',').map(&:strip)
+          if ips[1] != mpay24_ip
+            raise "invalid forwarded originator IP of x#{ips[1]}x vs #{mpay24_ip}".inspect
+          end 
+        else
+          raise request.env.inspect
+        end
+      else
+        raise "invalid originator IP of #{request.env['REMOTE_ADDR']} vs #{mpay24_ip}".inspect
+      end
+    end
+  end
+
 end
