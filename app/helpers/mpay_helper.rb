@@ -19,6 +19,6 @@ module MpayHelper
 
   def spree_mpay_iframe(order, width=680, height=500)
     mpay = Spree::BillingIntegration::Mpay.where(:active => true).where(:environment => Rails.env.to_s).first
-    "<iframe src=\"#{mpay.generate_url(@order)}\" width=#{width}px height=#{height}px></iframe>"
+    "<iframe src=\"#{mpay.generate_url(@order)}\" width=#{width}px height=#{height}px></iframe>".html_safe
   end
 end
