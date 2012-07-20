@@ -54,16 +54,18 @@ module SpreeMpay
     def self.parse_result(response)
       result = {}
 
-      #raise response.status.inspect
-
-      #if response.status == :ok
+      if response.is_a?(Net::HTTPSuccess)
         response.body.split('&').each do |part|
           key, value = part.split("=")
-          result[key] = CGI.unescape(value)
+          result[key] = value.blank? ? "" : CGI.unescape(value)
         end
-      #else
-      #  raise response.inspect
-      #end
+      else
+        raise "Error contacting mpay24 server: #{response.inspect}"
+      end
+
+      if result["STATUS"] == "ERROR"
+        raise "Error receiving Mpay24 iframe URL: #{result["RETURNCODE"]}"
+      end
 
       result
     end
