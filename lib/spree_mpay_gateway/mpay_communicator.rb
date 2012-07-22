@@ -1,7 +1,7 @@
 require 'net/https'
 require 'uri'
 
-module SpreeMpay
+module SpreeMpayGateway
   class MpayCommunicator
 
     TEST_REDIRECT_URL = 'https://test.mPAY24.com/app/bin/etpv5'.freeze

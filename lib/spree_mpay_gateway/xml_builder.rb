@@ -1,6 +1,6 @@
 require 'builder'
 
-module SpreeMpay
+module SpreeMpayGateway
   class XmlBuilder
     def self.generate_mdxi_for_order(order, response_url, secret)
       xml = Builder::XmlMarkup.new

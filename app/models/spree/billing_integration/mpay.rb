@@ -30,8 +30,8 @@ class Spree::BillingIntegration::Mpay < Spree::BillingIntegration
   # generate the iframe URL
   def generate_url(order)
 
-    cmd = SpreeMpay::XmlBuilder.generate_mdxi_for_order(order, preferred_url, preferred_secret_phrase)
-    result_url = SpreeMpay::MpayCommunicator.make_request(order, merchant_id, cmd, prefers_test_mode?)
+    cmd = SpreeMpayGateway::XmlBuilder.generate_mdxi_for_order(order, preferred_url, preferred_secret_phrase)
+    result_url = SpreeMpayGateway::MpayCommunicator.make_request(order, merchant_id, cmd, prefers_test_mode?)
    
     if !result_url.blank? 
       order.created_at = Time.now
