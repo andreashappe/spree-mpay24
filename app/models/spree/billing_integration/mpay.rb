@@ -30,6 +30,9 @@ class Spree::BillingIntegration::Mpay < Spree::BillingIntegration
     Spree::Order.find(:first, :conditions => { :id => tid })
   end
 
+  def source_required?
+    false
+  end
 
   # generate the iframe URL
   def generate_url(order)

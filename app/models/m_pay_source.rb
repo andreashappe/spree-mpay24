@@ -3,6 +3,8 @@ class MPaySource < ActiveRecord::Base
 
   validates_presence_of :p_type, :mpayid
 
+  attr_accessible :p_type, :brand, :mpayid
+
   def payment_gateway
      BillingIntegration::Mpay.current
   end
