@@ -14,6 +14,10 @@ class Spree::BillingIntegration::Mpay < Spree::BillingIntegration
     ActiveMerchant::Billing::MpayGateway
   end
 
+  def self.current
+    Spree::BillingIntegration::Mpay.where(:active => true).where(:environment => Rails.env.to_s).first
+  end
+
   def find_order(tid)
     if prefers_secret_phrase?
       if tid.starts_with?(preferred_secret_phrase)
@@ -23,7 +27,7 @@ class Spree::BillingIntegration::Mpay < Spree::BillingIntegration
       end
     end
 
-    Order.find(:first, :conditions => { :id => tid })
+    Spree::Order.find(:first, :conditions => { :id => tid })
   end
 
 
