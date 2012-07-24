@@ -36,6 +36,8 @@ class MpayConfirmationController < Spree::BaseController
 
         order.update!
         order.next!
+      else
+        raise "Order #{order.id}: unknown currency #{params["CURRENCY"]}"
       end
     when "RESERVED"
 	logger.info "we have auto-completion for confirmation requests, so do nothing"
@@ -65,6 +67,8 @@ class MpayConfirmationController < Spree::BaseController
   end
 
   def verify_ip
+    return if Rails.env.test?
+
     remote_ip = request.env['REMOTE_ADDR']
     if remote_ip == "127.0.0.1"
       #maybe we've gotten forwarded by the nginx reverse proxy
