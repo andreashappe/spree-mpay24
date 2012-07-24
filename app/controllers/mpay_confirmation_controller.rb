@@ -15,6 +15,8 @@ class MpayConfirmationController < Spree::BaseController
 
     # get the order
     order = Spree::BillingIntegration::Mpay.current.find_order(params["TID"])
+    raise "Order #{params["TID"]} not found" if order.nil?
+    raise "Order #{order.id} in wrong state #{order.state}" if !order.payment?
 
     case params["STATUS"]
     when "BILLED"
@@ -23,14 +25,11 @@ class MpayConfirmationController < Spree::BaseController
 
         payment_method = Spree::PaymentMethod.where(:type => "Spree::BillingIntegration::Mpay").where(:environment => Rails.env.to_s).first
 
-        # TODO log the payment
         payment = order.payments.new
         payment.amount = params["PRICE"]
         payment.payment_method = payment_method
         payment.save!
 
-        # TODO: create this before (when sending the request?)
-	# TODO: but do we even want this?
         payment.started_processing!
         payment.complete!
         payment.save!
