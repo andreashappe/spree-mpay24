@@ -18,17 +18,26 @@ Installation
 
 This plugin has been tested with Spree 0.11.2 and Spree 0.40.3.
 
-Spree 0.11
-----------
+Spree 1.1
+---------
 
-Install it as a git submodule. To do this execute the following within your application
-directory:
+Just add the extension to your Gemfile
 
 <blockquote>
- git clone git://github.com/andreashappe/spree-mpay24 vendor/extensions/mpay_gateway
- cd vendor/extensions/mpay_gateway
- git checkout spree-0.11
+   gem 'spree_mpay_gateway'
 </blockquote>
+
+Spree 1.0
+---------
+
+Add the extension to your Gemfile
+
+<blockquote>
+   gem 'spree_mpay_gateway'
+</blockquote>
+
+If you are experiencing problems when creating a new payment gateway (as "name field is empty")
+please see https://github.com/spree/spree_gateway/issues/10
 
 Spree 0.40
 ----------
@@ -43,6 +52,18 @@ And include it in your Project's Gemfile
 
 <blockquote>
 	gem 'mpay_gateway'
+</blockquote>
+
+Spree 0.11
+----------
+
+Install it as a git submodule. To do this execute the following within your application
+directory:
+
+<blockquote>
+ git clone git://github.com/andreashappe/spree-mpay24 vendor/extensions/mpay_gateway
+ cd vendor/extensions/mpay_gateway
+ git checkout spree-0.11
 </blockquote>
 
 Configuration
