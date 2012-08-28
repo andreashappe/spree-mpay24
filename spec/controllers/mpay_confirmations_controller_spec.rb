@@ -69,4 +69,30 @@ describe MpayConfirmationController, "receive payment notifications" do
     closed_order.payment_state.should == "balance_due"
     # closed_order.state.should_not == "complete"
   end
+
+  it "should not accept order states != RESERVED/BILLED" do
+    order = user.orders.create
+
+    Spree::BillingIntegration::Mpay.current.stub :find_order => order
+    order.stub :state => 'payment'
+
+    options = {"OPERATION"=>"CONFIRMATION", "TID"=>"assdf_#{order.id}", "STATUS"=>"SOMEWRONGSTATE", "PRICE"=>"5", "CURRENCY"=>"EUR", "P_TYPE"=>"CC", "BRAND"=>"VISA", "MPAYTID"=>"1385651", "USER_FIELD"=>"", "ORDERDESC"=>order.number, "CUSTOMER"=>"Andreas Happe", "CUSTOMER_EMAIL"=>order.user.email, "LANGUAGE"=>"DE", "CUSTOMER_ID"=>"", "PROFILE_STATUS"=>"IGNORED", "FILTER_STATUS"=>"", "APPR_CODE"=>"-test-"}
+
+    lambda do
+      spree_get :show, options
+    end.should raise_error
+  end
+
+  it "should not accept operation != CONFIRMATION" do
+    order = user.orders.create
+
+    Spree::BillingIntegration::Mpay.current.stub :find_order => order
+    order.stub :state => 'payment'
+
+    options = {"OPERATION"=>"INVALID_CONFIRMATION", "TID"=>"assdf_#{order.id}", "STATUS"=>"RESERVED", "PRICE"=>"5", "CURRENCY"=>"EUR", "P_TYPE"=>"CC", "BRAND"=>"VISA", "MPAYTID"=>"1385651", "USER_FIELD"=>"", "ORDERDESC"=>order.number, "CUSTOMER"=>"Andreas Happe", "CUSTOMER_EMAIL"=>order.user.email, "LANGUAGE"=>"DE", "CUSTOMER_ID"=>"", "PROFILE_STATUS"=>"IGNORED", "FILTER_STATUS"=>"", "APPR_CODE"=>"-test-"}
+
+    lambda do
+      spree_get :show, options
+    end.should raise_error
+  end
 end
