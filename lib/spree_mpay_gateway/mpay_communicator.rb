@@ -9,7 +9,7 @@ module SpreeMpayGateway
 
     def self.make_request(order, merchant_id, cmd, test_mode=true)
       # send the HTTP request
-      response = send_request(merchant_id, cmd)
+      response = send_request(merchant_id, cmd, test_mode)
 
       result = parse_result(response)
 
