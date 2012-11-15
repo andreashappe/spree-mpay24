@@ -74,14 +74,16 @@ class MpayConfirmationController < Spree::BaseController
       #maybe we've gotten forwarded by the nginx reverse proxy
       if request.env.include?('HTTP_X_FORWARDED_FOR')
         ips = request.env['HTTP_X_FORWARDED_FOR'].split(',').map(&:strip)
-        remote_ip = ips[1]
       else
         raise request.env.inspect
       end
     end
 
-    if ![MPAY24_IP, MPAY24_TEST_IP].include?(remote_ip)
-      raise "invalid originator IP of '#{remote_ip}'".inspect
+    ips.each do |ip|
+      if [MPAY24_IP, MPAY24_TEST_IP].include?(ip)
+        return
+      end
     end
+    raise "invalid originator IP chain '#{ips.inspect}'".inspect
   end
 end
