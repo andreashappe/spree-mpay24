@@ -29,11 +29,11 @@ class BillingIntegration::Mpay < BillingIntegration
     if request.env['REMOTE_ADDR'] != mpay24_ip
       if request.env['REMOTE_ADDR'] == "127.0.0.1"
         #maybe we've gotten forwarded by the nginx reverse proxy
-	if request.env.include?('HTTP_X_FORWARDED_FOR')
-          ips = request.env['HTTP_X_FORWARDED_FOR'].split(',').map(&:strip)
-          if ips[1] != mpay24_ip
-            raise "invalid forwarded originator IP of x#{ips[1]}x vs #{mpay24_ip}".inspect
-          end 
+	      if request.env.include?('HTTP_X_FORWARDED_FOR')
+          ips = request.env['HTTP_X_FORWARDED_FOR']
+          if !ips.include?(mpay24_ip)
+            raise "invalid forwarded originator IP #{ips} vs #{mpay24_ip}".inspect
+          end
         else
           raise request.env.inspect
         end
