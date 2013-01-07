@@ -7,7 +7,7 @@ class BillingIntegration::Mpay < BillingIntegration
 
   preference :production_merchant_id, :string
   preference :test_merchant_id, :string
-  preference :url, :string, :default =>  'http://trageboutiquedev.com/'
+  preference :url, :string, :default =>  'http://localhost/'
   preference :secret_phrase, :string
 
   TEST_REDIRECT_URL = 'https://test.mPAY24.com/app/bin/etpv5'
